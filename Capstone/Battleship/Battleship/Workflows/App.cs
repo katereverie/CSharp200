@@ -2,25 +2,18 @@
 using Battleship.UI.Interfaces;
 using Battleship.UI.Utilities;
 using Battleship.UI.BaseClasses;
+using Battleship.UI.Models.Ships;
 
 namespace Battleship.UI.Workflows
 {
     public class App
     {
-        private readonly Random _startDecider;
-        private readonly GameManager _mgr;
-        private readonly IPlayer _p1;
-        private readonly IPlayer _p2;
+        private Random _startDecider = new Random();
+        private GameManager _mgr = new GameManager();
+        private IPlayer _p1;
+        private IPlayer _p2;
 
-        public App(IPlayer p1, IPlayer p2)
-        {
-            _startDecider = new Random();
-            _mgr = new GameManager();
-            _p1 = p1;
-            _p2 = p2;
-        }
-
-        public void SetUpGame(IPlayer player, Ship ship)
+        private void SetUpShip(IPlayer player, Ship ship)
         {
             if (player.IsHuman)
             {
@@ -89,6 +82,38 @@ namespace Battleship.UI.Workflows
             } 
         }
 
+        private void SetUpPlayer(IPlayer player)
+        {
+            SetUpShip(player, new AircraftCarrier());
+            SetUpShip(player, new BattleShip());
+            SetUpShip(player, new Cruiser());
+            SetUpShip(player, new Submarine());
+            SetUpShip(player, new Destroyer());
+        }
+
+        private void SelectPlayer()
+        {
+            while (true)
+            {
+                Console.WriteLine("Welcome to Battleship where only the best Captain survives!\n");
+                ConsoleIO.PrintPlayerSelectionRules();
+
+                _p1 = PlayerFactory.GetPlayer("First player - (H)uman or (C)omputer? Your choice: ");
+                _p2 = PlayerFactory.GetPlayer("Second player - (H)uman or (C)omputer? Your choice: ");
+
+                if (!_p1.IsHuman && !_p2.IsHuman)
+                {
+                    ConsoleIO.PrintErrorMessage("At least one player must be human.");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    continue;
+                }
+
+                break;
+            }
+        }
+
         private IPlayer GetNextPlayer(IPlayer currentPlayer)
         {
             if (currentPlayer == _p1)
@@ -99,9 +124,15 @@ namespace Battleship.UI.Workflows
             return _p1;
         }
 
-        // Game Begins
-        public void RunGame()
+        public void Run()
         {
+            SelectPlayer();
+            Console.Clear();
+
+            SetUpPlayer(_p1);
+            SetUpPlayer(_p2);
+            Console.Clear();
+
             IPlayer currentPlayer = _startDecider.Next(1, 3) == 1 ? _p1 : _p2;
             IPlayer nextPlayer;
             ConsoleIO.PrintGameRules();
