@@ -1,0 +1,1 @@
+﻿Console.WriteLine("Starting Point for Video Game Inventory");

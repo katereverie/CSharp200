@@ -1,0 +1,168 @@
+﻿using Battleship.UI.Logic;
+using NUnit.Framework;
+using Battleship.UI.Models.Ships;
+using Battleship.Tests.TestModels.DefaultShips;
+using Battleship.UI.Utilities;
+using Battleship.Tests.TestModels;
+using Battleship.UI;
+
+namespace Battleship.Tests
+{
+    [TestFixture]
+    public class GameManagerTests
+    {
+        private GameManager _mgr = new GameManager();
+
+        [Test]
+        public void TestShipPlacement_Offgrid()
+        {
+            var ship1 = new BattleShip();
+            var ship2 = new DefaultBattleShip();
+
+            var startCoord = new Coordinate(1, 8); // A8
+
+            ship1.SetCoordinates(startCoord, 'V');
+
+            var result1 = _mgr.CheckOffgridShip(ship1);
+            var result2 = _mgr.CheckOffgridShip(ship2);
+
+            Assert.That(result1, Is.EqualTo(ActionResult.Offgrid));
+            Assert.That(result2, Is.EqualTo(ActionResult.Placed));
+        }
+
+        [Test]
+        public void TestShipPlacement_Overlap()
+        {
+            var ship1 = new BattleShip();
+            var ship2 = new DefaultBattleShip();
+
+            var startCoord = new Coordinate(1, 6); // A6
+
+            var repo = new ShipRepository();
+            ship1.SetCoordinates(startCoord, 'H');
+
+            var result1 = _mgr.CheckOverlapShip(ship1, repo.Ships);
+            var result2 = _mgr.CheckOverlapShip(ship2, repo.Ships);
+
+            Assert.That(result1, Is.EqualTo(ActionResult.Added));
+            Assert.That(result2, Is.EqualTo(ActionResult.Overlap));
+        }
+
+        [Test]
+        public void TestShotPlacement_Overlap()
+        {
+
+            var shot1 = new Coordinate(1, 1); // A1
+            var shot2 = new Coordinate(1, 2); // A2
+
+            var repo = new ShotRepository(); 
+
+            var result1 = _mgr.CheckOverlapShot(shot1, repo.Shots);
+            var result2 = _mgr.CheckOverlapShot(shot2, repo.Shots);
+
+            Assert.That(result1, Is.EqualTo(ActionResult.Overlap));
+            Assert.That(result2, Is.EqualTo(ActionResult.Placed));
+
+        }
+
+        [Test]
+        public void TestShotPlacement_Miss()
+        {
+            var shot1 = new Coordinate(1, 6); // A6
+            var shot2 = new Coordinate(2, 5); // B5
+            var shot3 = new Coordinate(3, 4); // C4
+
+            var repo = new ShipRepository();
+
+            var result1 = _mgr.EvaluateValidShot(shot1, repo.Ships);
+            var result2 = _mgr.EvaluateValidShot(shot2, repo.Ships);
+            var result3 = _mgr.EvaluateValidShot(shot3, repo.Ships);
+
+            bool allMiss = result1 == ActionResult.Miss && result1 == result2 && result2 == result3 ? true : false;
+
+            Assert.That(allMiss, Is.True);
+        }
+
+        [Test]
+        public void TestShotPlacement_HitButNotSunk()
+        {
+            var shot1 = new Coordinate(1, 1); // A1
+            var shot2 = new Coordinate(2, 1); // B1
+            var shot3 = new Coordinate(3, 1); // C1
+
+            var repo = new ShipRepository();
+
+            var result1 = _mgr.EvaluateValidShot(shot1, repo.Ships);
+            var result2 = _mgr.EvaluateValidShot(shot2, repo.Ships);
+            var result3 = _mgr.EvaluateValidShot(shot3, repo.Ships);
+
+            bool allHit = result1 == ActionResult.Hit && result1 == result2 && result2 == result3? true : false;
+
+            Assert.That(allHit, Is.True);
+        }
+
+        public void TestShotPlacement_HitAndSunk()
+        {
+            var shot1 = new Coordinate(2, 1); //B1
+            var shot2 = new Coordinate(1, 1); //A1
+
+            var repo = new ShipRepository();
+
+            repo.Ships[0].CountHit();
+            repo.Ships[0].CountHit();
+            repo.Ships[0].CountHit();
+            repo.Ships[0].CountHit();
+
+            var result1 = _mgr.EvaluateValidShot(shot1, repo.Ships);
+            var result2 = _mgr.EvaluateValidShot(shot2 , repo.Ships);
+
+            Assert.That(result1, Is.EqualTo(ActionResult.Hit));
+            Assert.That(result2, Is.EqualTo(ActionResult.Sunk));
+        }
+
+        [Test]
+        public void TestCalculation_RemainingShips()
+        {
+            var repo = new ShipRepository();
+
+            var shot1 = new Coordinate(1, 1); // A1
+            var shot2 = new Coordinate(1, 2); // A2
+            var shot3 = new Coordinate(1, 3);
+            var shot4 = new Coordinate(1, 4);
+            var shot5 = new Coordinate(1, 5);
+
+            _mgr.EvaluateValidShot(shot1, repo.Ships);
+            _mgr.EvaluateValidShot(shot2, repo.Ships);
+            _mgr.EvaluateValidShot(shot3, repo.Ships);
+            _mgr.EvaluateValidShot(shot4, repo.Ships);
+
+            var calResult1 = _mgr.CalculateRemainingShips(repo.Ships);
+
+            _mgr.EvaluateValidShot(shot5 , repo.Ships);
+
+            var calResult2 = _mgr.CalculateRemainingShips(repo.Ships);
+
+            Assert.That(calResult1, Is.EqualTo(5));
+            Assert.That(calResult2, Is.EqualTo(4));
+        }
+
+        [Test] 
+        public void TestCalculation_RemainingHits()
+        {
+            var repo = new ShipRepository(); // 17
+
+            var calResult1 = _mgr.CalculateRemainingHits(repo.Ships);
+
+            var shot1 = new Coordinate(1, 1);
+            var shot2 = new Coordinate(1, 2);
+
+            _mgr.EvaluateValidShot(shot1 , repo.Ships);
+            _mgr.EvaluateValidShot(shot2 , repo.Ships);
+
+            var calResult2 = _mgr.CalculateRemainingHits(repo.Ships);
+
+            Assert.That(calResult1 , Is.EqualTo(17));
+            Assert.That(calResult2 , Is.EqualTo(15));
+        }
+    }
+}
