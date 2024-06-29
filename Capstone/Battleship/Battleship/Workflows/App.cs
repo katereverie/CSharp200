@@ -126,6 +126,7 @@ namespace Battleship.UI.Workflows
 
         public void Run()
         {
+            // set up game
             SelectPlayer();
             Console.Clear();
 
@@ -138,6 +139,7 @@ namespace Battleship.UI.Workflows
             ConsoleIO.PrintGameRules();
             Console.WriteLine($"The God of Chance has blessed {currentPlayer.Name} to place the first shot!\n");
 
+            // start game
             while (true) 
             {
                 nextPlayer = GetNextPlayer(currentPlayer);
