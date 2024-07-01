@@ -69,6 +69,11 @@ namespace Battleship.UI.Utilities
             } while (true);
         }
 
+        
+        /// <summary>
+        /// Streamline marking error message red when prompting users
+        /// </summary>
+        /// <param name="error">takes a string error message and outputs red error message</param>
         public static void PrintErrorMessage(string error)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -76,6 +81,10 @@ namespace Battleship.UI.Utilities
             Console.ResetColor();
         }
 
+        /// <summary>
+        /// Prints a 10x10 grid of marked symbols
+        /// </summary>
+        /// <param name="board">takes a char array. This method assumes the argument to be a char array of size 100</param>
         public static void PrintBoard(char[] board) 
         {
             // head row

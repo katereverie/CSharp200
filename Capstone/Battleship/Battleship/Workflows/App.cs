@@ -6,6 +6,7 @@ using Battleship.UI.Models.Ships;
 
 namespace Battleship.UI.Workflows
 {
+
     public class App
     {
         private Random _startDecider = new Random();
