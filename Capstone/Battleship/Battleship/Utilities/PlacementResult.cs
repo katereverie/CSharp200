@@ -1,13 +1,10 @@
 ﻿namespace Battleship.UI.Utilities
 {
-    public enum ActionResult
+    public enum PlacementResult
     {
         Placed,
         Added,
         Offgrid,
-        Overlap,
-        Hit,
-        Miss,
-        Sunk
+        Overlap
     }
 }

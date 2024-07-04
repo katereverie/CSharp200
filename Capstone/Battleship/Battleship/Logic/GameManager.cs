@@ -5,20 +5,20 @@ namespace Battleship.UI.Logic
 {
     public class GameManager
     {
-        public ActionResult CheckOffgridShip(Ship shipToPlace)
+        public PlacementResult CheckOffgridShip(Ship shipToPlace)
         {
             for (int i = 0; i < shipToPlace.Size; i++)
             {
                 if (shipToPlace.Coordinates[i].X > 10 || shipToPlace.Coordinates[i].Y > 10)
                 {
-                    return ActionResult.Offgrid;
+                    return PlacementResult.Offgrid;
                 }
             }
 
-            return ActionResult.Placed;
+            return PlacementResult.Placed;
         }
 
-        public ActionResult CheckOverlapShip(Ship shipToAdd, Ship[] ships)
+        public PlacementResult CheckOverlapShip(Ship shipToAdd, Ship[] ships)
         {
             foreach (Ship ship in ships)
             {
@@ -31,26 +31,26 @@ namespace Battleship.UI.Logic
                 {
                     if (shipToAdd.Coordinates.Contains(coordinate))
                     {
-                        return ActionResult.Overlap;
+                        return PlacementResult.Overlap;
                     }
                 }
             }
 
-            return ActionResult.Added;
+            return PlacementResult.Added;
         }
 
-        public ActionResult CheckOverlapShot(Coordinate shot, List<Coordinate> Shots)
+        public PlacementResult CheckOverlapShot(Coordinate shot, List<Coordinate> Shots)
         {
             if (Shots == null || !Shots.Contains(shot))
             {
-                return ActionResult.Placed;
+                return PlacementResult.Placed;
             }
 
-            return ActionResult.Overlap;
+            return PlacementResult.Overlap;
 
         }
 
-        public ActionResult EvaluateValidShot(Coordinate validShot, Ship[] otherPlayerShips)
+        public ShotResult EvaluateValidShot(Coordinate validShot, Ship[] otherPlayerShips)
         {
 
             foreach (Ship ship in otherPlayerShips)
@@ -58,11 +58,11 @@ namespace Battleship.UI.Logic
                 if (ship.Coordinates.Contains(validShot))
                 {
                     ship.CountHit();
-                    return ship.IsSunk ? ActionResult.Sunk : ActionResult.Hit;
+                    return ship.IsSunk ? ShotResult.Sunk : ShotResult.Hit;
                 }
             }
 
-            return ActionResult.Miss;
+            return ShotResult.Miss;
         }
 
         public int CalculateRemainingShips(Ship[] Ships)

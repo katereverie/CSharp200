@@ -33,13 +33,13 @@ namespace Battleship.UI.Workflows
                     char direction = player.DecideDirection();
                     ship.SetCoordinates(startingCoordinate, direction);
 
-                    if (_mgr.CheckOffgridShip(ship) == ActionResult.Offgrid)
+                    if (_mgr.CheckOffgridShip(ship) == PlacementResult.Offgrid)
                     {
                         ConsoleIO.PrintErrorMessage("Ship Offgrid.\n");
                         continue;
                     }
 
-                    if (_mgr.CheckOverlapShip(ship, player.Ships) == ActionResult.Overlap) 
+                    if (_mgr.CheckOverlapShip(ship, player.Ships) == PlacementResult.Overlap) 
                     {
                         ConsoleIO.PrintErrorMessage("Ship Overlap.\n");
                         continue;
@@ -67,12 +67,12 @@ namespace Battleship.UI.Workflows
                     Coordinate startingCoordinate = player.DecideCoordinate();
                     ship.SetCoordinates(startingCoordinate, direction);
 
-                    if (_mgr.CheckOffgridShip(ship) == ActionResult.Offgrid)
+                    if (_mgr.CheckOffgridShip(ship) == PlacementResult.Offgrid)
                     {
                         continue;
                     } 
 
-                    if (_mgr.CheckOverlapShip(ship, player.Ships) == ActionResult.Overlap)
+                    if (_mgr.CheckOverlapShip(ship, player.Ships) == PlacementResult.Overlap)
                     {
                         continue;
                     }
@@ -159,15 +159,16 @@ namespace Battleship.UI.Workflows
                 }
 
                 // Placing shot
-                ActionResult result;
+                PlacementResult placementResult;
+                ShotResult shotResult;
                 Coordinate validShot;
 
                 while (true)
                 {
                     Coordinate targetShot = currentPlayer.IsHuman ? currentPlayer.DecideCoordinate("Enter target coordinate (e.g. A5): ") : currentPlayer.DecideCoordinate();
-                    result = _mgr.CheckOverlapShot(targetShot, currentPlayer.Shots);
+                    placementResult = _mgr.CheckOverlapShot(targetShot, currentPlayer.Shots);
 
-                    if (result == ActionResult.Overlap)
+                    if (placementResult == PlacementResult.Overlap)
                     {
                         if (currentPlayer.IsHuman)
                         {
@@ -184,21 +185,21 @@ namespace Battleship.UI.Workflows
 
 
                 Console.WriteLine($"{currentPlayer.Name} fires a shot at {validShot}...");
-                result = _mgr.EvaluateValidShot(validShot, nextPlayer.Ships);
+                shotResult = _mgr.EvaluateValidShot(validShot, nextPlayer.Ships);
 
                 int index = CoordinateHelper.ConvertToIndex(validShot);
 
-                switch (result)
+                switch (shotResult)
                 {
-                    case ActionResult.Miss:
+                    case ShotResult.Miss:
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("\nSplash! A miss!\n");
                         break;
-                    case ActionResult.Hit:
+                    case ShotResult.Hit:
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine("\nKABOOM! A hit!\n");
                         break;
-                    case ActionResult.Sunk:
+                    case ShotResult.Sunk:
                         Console.ForegroundColor = ConsoleColor.DarkGreen;
                         Console.WriteLine("\nKABOOM!\nGLUG-GLUG-GLUG! A ship sunk!\n");
                         break;
@@ -208,7 +209,7 @@ namespace Battleship.UI.Workflows
 
                 if (currentPlayer.IsHuman)
                 {
-                    currentPlayer.GameBoard[index] = result == ActionResult.Miss ? 'M' : 'H';
+                    currentPlayer.GameBoard[index] = shotResult == ShotResult.Miss ? 'M' : 'H';
                 }
 
                 // exit game statement
