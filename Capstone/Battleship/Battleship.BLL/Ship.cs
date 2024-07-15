@@ -19,22 +19,22 @@
             Coordinates = new Coordinate[size];
         }
 
-        public void SetCoordinates(Coordinate startingCoordinate, char direction)
+        public void SetCoordinates(Coordinate startingCoord, char dir)
         {
 
-            if (direction == 'V')
+            if (dir == 'V')
             {
                 for (int i = 0; i < Coordinates.Length; i++)
                 {
-                    Coordinates[i] = new Coordinate(startingCoordinate.X, startingCoordinate.Y + i);
+                    Coordinates[i] = new Coordinate(startingCoord.X, startingCoord.Y + i);
                 }
             }
 
-            if (direction == 'H')
+            if (dir == 'H')
             {
                 for (int i = 0; i < Coordinates.Length; i++)
                 {
-                    Coordinates[i] = new Coordinate(startingCoordinate.X + i, startingCoordinate.Y);
+                    Coordinates[i] = new Coordinate(startingCoord.X + i, startingCoord.Y);
                 }
             }
         }
