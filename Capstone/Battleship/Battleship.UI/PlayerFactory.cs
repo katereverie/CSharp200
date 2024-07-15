@@ -5,14 +5,16 @@ namespace Battleship.UI
 {
     public static class PlayerFactory
     {
-        public static IPlayer GetPlayer(string prompt)
+        private static int _computerPlayerCount = 0;
+
+        public static IPlayer GetPlayer(int playerNumber)
         {
-            string userChoice;
+            string? userChoice;
 
             do
             {
-                Console.Write(prompt);
-                userChoice = Console.ReadLine().Trim().ToUpper();
+                Console.Write($"Player {playerNumber}- (H)uman or (C)omputer? Your choice: ");
+                userChoice = Console.ReadLine()?.Trim().ToUpper();
 
                 if (userChoice == "H" || userChoice == "C")
                 {
@@ -21,6 +23,15 @@ namespace Battleship.UI
                         case "H":
                             return new HumanPlayer();
                         case "C":
+                            switch (_computerPlayerCount)
+                            {
+                                case 1:
+                                    Console.WriteLine("At least one player must be human.");
+                                    continue;
+                                default:
+                                    _computerPlayerCount++;
+                                    break;
+                            }
                             return new ComputerPlayer();
                     }
                 }
