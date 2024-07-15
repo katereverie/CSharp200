@@ -1,12 +1,11 @@
-﻿using Battleship.UI.BaseClasses;
-using Battleship.UI.Interfaces;
-using Battleship.UI.Utilities;
+﻿using Battleship.BLL.Interfaces;
+using Battleship.BLL;
 
-namespace Battleship.UI.Implementations.Players
+namespace Battleship.UI.Players
 {
     public class HumanPlayer : IPlayer
     {
-        public string Name { get; } = "Capt. " +  ConsoleIO.GetPlayerName("What's Your Name? Your name: ");
+        public string Name { get; } = "Capt. " +  GameConsole.GetPlayerName("What's Your Name? Your name: ");
         public bool IsHuman { get; } = true;
         public Ship[] Ships {  get; private set; } = new Ship[5];
         public List<Coordinate> Shots { get; private set; } = new List<Coordinate>();
@@ -14,9 +13,9 @@ namespace Battleship.UI.Implementations.Players
 
         public Coordinate DecideCoordinate(string prompt)
         {
-            string validCoordinate = ConsoleIO.GetStringCoordinate(prompt);
+            string validCoordinate = GameConsole.GetStringCoordinate(prompt);
 
-            return CoordinateHelper.Parse(validCoordinate);
+            return Coordinate.ToCoordinate(validCoordinate);
         }
 
         public Coordinate DecideCoordinate()
@@ -26,7 +25,7 @@ namespace Battleship.UI.Implementations.Players
 
         public char DecideDirection()
         {
-            return ConsoleIO.GetDirection();
+            return GameConsole.GetDirection();
         }
 
         public void AddShip(Ship shipToAdd)

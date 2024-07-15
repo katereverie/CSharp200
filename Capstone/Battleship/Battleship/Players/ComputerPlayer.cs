@@ -1,7 +1,7 @@
-﻿using Battleship.UI.Interfaces;
-using Battleship.UI.BaseClasses;
+﻿using Battleship.BLL.Interfaces;
+using Battleship.BLL;
 
-namespace Battleship.UI.Implementations.Players
+namespace Battleship.UI.Players
 {
     public class ComputerPlayer : IPlayer
     {
