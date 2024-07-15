@@ -1,4 +1,4 @@
-﻿using Battleship.UI;
+﻿using Battleship.BLL;
 
 namespace Battleship.Tests.TestModels
 {

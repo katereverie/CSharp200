@@ -1,5 +1,5 @@
 ﻿using Battleship.Tests.TestModels.DefaultShips;
-using Battleship.UI.BaseClasses;
+using Battleship.BLL;
 
 namespace Battleship.Tests.TestModels
 {

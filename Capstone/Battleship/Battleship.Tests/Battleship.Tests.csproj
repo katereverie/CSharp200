@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Battleship.BLL\Battleship.BLL.csproj" />
     <ProjectReference Include="..\Battleship\Battleship.UI.csproj" />
   </ItemGroup>
 

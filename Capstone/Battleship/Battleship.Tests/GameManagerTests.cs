@@ -1,10 +1,8 @@
-﻿using Battleship.UI.Logic;
-using NUnit.Framework;
-using Battleship.UI.Models.Ships;
+﻿using NUnit.Framework;
+using Battleship.BLL.Ships;
 using Battleship.Tests.TestModels.DefaultShips;
-using Battleship.UI.Utilities;
+using Battleship.BLL;
 using Battleship.Tests.TestModels;
-using Battleship.UI;
 
 namespace Battleship.Tests
 {
@@ -78,7 +76,7 @@ namespace Battleship.Tests
             var result2 = _mgr.EvaluateValidShot(shot2, repo.Ships);
             var result3 = _mgr.EvaluateValidShot(shot3, repo.Ships);
 
-            bool allMiss = result1 == PlacementResult.Miss && result1 == result2 && result2 == result3 ? true : false;
+            bool allMiss = result1 == ShotResult.Miss && result1 == result2 && result2 == result3 ? true : false;
 
             Assert.That(allMiss, Is.True);
         }
@@ -96,7 +94,7 @@ namespace Battleship.Tests
             var result2 = _mgr.EvaluateValidShot(shot2, repo.Ships);
             var result3 = _mgr.EvaluateValidShot(shot3, repo.Ships);
 
-            bool allHit = result1 == PlacementResult.Hit && result1 == result2 && result2 == result3? true : false;
+            bool allHit = result1 == ShotResult.Hit && result1 == result2 && result2 == result3? true : false;
 
             Assert.That(allHit, Is.True);
         }
@@ -116,8 +114,8 @@ namespace Battleship.Tests
             var result1 = _mgr.EvaluateValidShot(shot1, repo.Ships);
             var result2 = _mgr.EvaluateValidShot(shot2 , repo.Ships);
 
-            Assert.That(result1, Is.EqualTo(PlacementResult.Hit));
-            Assert.That(result2, Is.EqualTo(PlacementResult.Sunk));
+            Assert.That(result1, Is.EqualTo(ShotResult.Hit));
+            Assert.That(result2, Is.EqualTo(ShotResult.Sunk));
         }
 
         [Test]

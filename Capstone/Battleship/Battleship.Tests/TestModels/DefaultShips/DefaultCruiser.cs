@@ -1,5 +1,6 @@
-﻿using Battleship.UI;
-using Battleship.UI.Models.Ships;
+﻿using Battleship.BLL;
+using Battleship.BLL.Ships;
+
 
 namespace Battleship.Tests.TestModels.DefaultShips
 {
