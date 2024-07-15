@@ -31,7 +31,6 @@
             char col = (char)(X + 64);
             int row = Y;
 
-
             return $"{col}{row}";
         }
     }
