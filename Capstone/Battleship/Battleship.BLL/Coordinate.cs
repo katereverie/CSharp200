@@ -28,10 +28,7 @@
 
         public override string ToString()
         {
-            char col = (char)(X + 64);
-            int row = Y;
-
-            return $"{col}{row}";
+            return $"{(char)(X + 64)}{Y}";
         }
     }
 }
