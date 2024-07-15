@@ -4,16 +4,14 @@
     {
         string Name { get; }
         bool IsHuman { get; }
-        Ship[] Ships { get; }
+        List<Ship> Ships { get; }
         List<Coordinate> Shots { get; }
-        char[] GameBoard {  get; }
+        char[] ShotBoard {  get; }
 
         // a player can add ship and place a shot
-        Coordinate DecideCoordinate(string prompt);
-        Coordinate DecideCoordinate();
-        char DecideDirection();
-        void AddShip(Ship ship);
-        void PlaceShot(Coordinate targetShot);
-        void UpdateGameBoard(char shotSymbol, int index);
+        Coordinate GetCoordinate(string prompt);
+        char GetDirection();
+        void PlaceShip(Ship shipToPlace);
+        void UpdateShotBoard(char shotSymbol, int index);
     }
 }
