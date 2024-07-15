@@ -1,4 +1,4 @@
-﻿namespace Battleship.UI.Utilities
+﻿namespace Battleship.BLL
 {
     public enum PlacementResult
     {
