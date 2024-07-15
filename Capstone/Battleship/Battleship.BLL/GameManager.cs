@@ -2,28 +2,21 @@
 {
     public class GameManager
     {
-        public PlacementResult CheckOffgridShip(Ship shipToPlace)
+        public PlacementResult CheckOffgridShip(Coordinate startingCoord, int size, char dir)
         {
-            for (int i = 0; i < shipToPlace.Size; i++)
+            if (dir == 'V')
             {
-                if (shipToPlace.Coordinates[i].X > 10 || shipToPlace.Coordinates[i].Y > 10)
-                {
-                    return PlacementResult.Offgrid;
-                }
+                return startingCoord.Y + size > 11 ? PlacementResult.Offgrid : PlacementResult.Placed;
             }
 
-            return PlacementResult.Placed;
+            return startingCoord.X + size > 11 ? PlacementResult.Offgrid : PlacementResult.Placed;
         }
 
-        public PlacementResult CheckOverlapShip(Ship shipToAdd, Ship[] ships)
+        public PlacementResult CheckOverlapShip(Ship shipToAdd, List<Ship> ships)
         {
+
             foreach (Ship ship in ships)
             {
-                if (ship == null)
-                {
-                    continue;
-                }
-
                 foreach (Coordinate coordinate in ship.Coordinates)
                 {
                     if (shipToAdd.Coordinates.Contains(coordinate))
@@ -34,6 +27,7 @@
             }
 
             return PlacementResult.Added;
+            
         }
 
         public PlacementResult CheckOverlapShot(Coordinate shot, List<Coordinate> Shots)
@@ -47,7 +41,7 @@
 
         }
 
-        public ShotResult EvaluateValidShot(Coordinate validShot, Ship[] otherPlayerShips)
+        public ShotResult EvaluateValidShot(Coordinate validShot, List<Ship> otherPlayerShips)
         {
 
             foreach (Ship ship in otherPlayerShips)
@@ -62,11 +56,11 @@
             return ShotResult.Miss;
         }
 
-        public int CalculateRemainingShips(Ship[] Ships)
+        public int CalculateRemainingShips(List<Ship> ships)
         {
             int remainingShips = 5;
 
-            foreach (Ship ship in Ships)
+            foreach (Ship ship in ships)
             {
                 if (ship.IsSunk)
                 {
@@ -75,10 +69,9 @@
             }
 
             return remainingShips;
-
         }
 
-        public int CalculateRemainingHits(Ship[] Ships)
+        public int CalculateRemainingHits(List<Ship> Ships)
         {
             int remainingHits = 17;
 
@@ -90,23 +83,17 @@
             return remainingHits;
         }
 
-        public char[] MapShipsToBoard(char[] shipBoard, Ship[] ships)
+        public char[] MapShipsToBoard(char[] shipBoard, List<Ship> ships)
         {
-
-            foreach (Ship ship in ships)
+            if (ships != null)
             {
-                if (ship != null)
+                foreach (Ship ship in ships)
                 {
                     foreach (Coordinate coordinate in ship.Coordinates)
                     {
                         int index = Coordinate.ToBoardIndex(coordinate);
                         shipBoard[index] = ship.Symbol;
-                    } 
-                    
-                }
-                else
-                {
-                    continue;
+                    }
                 }
             }
 
