@@ -1,5 +1,6 @@
 ﻿using Battleship.BLL.Interfaces;
 using Battleship.BLL;
+using Battleship.BLL.Ships;
 
 namespace Battleship.UI.Players
 {
@@ -9,16 +10,11 @@ namespace Battleship.UI.Players
 
         public string Name { get; } = "Capt. Dee G. Tall";
         public bool IsHuman { get; } = false;
-        public Ship[] Ships { get; private set; } = new Ship[5];
-        public List<Coordinate> Shots { get; private set; } = new List<Coordinate>();
-        public char[] GameBoard {  get; }
+        public List<Ship> Ships { get; private set; } = new();
+        public List<Coordinate> Shots { get; set; } = new();
+        public char[] ShotBoard { get; } = new char[100];
 
-        public Coordinate DecideCoordinate(string prompt)
-        {
-            throw new NotImplementedException("A computer player doesn't need prompting.");
-        }
-
-        public Coordinate DecideCoordinate()
+        public Coordinate GetCoordinate(string prompt)
         {
             int x = _generator.Next(1, 11);
             int y = _generator.Next(1, 11);
@@ -26,32 +22,19 @@ namespace Battleship.UI.Players
             return new Coordinate(x, y);
         }
 
-        public char DecideDirection()
+        public char GetDirection()
         {
             return _generator.Next(1, 3) == 1? 'V' : 'H';
         }
 
-        public void AddShip(Ship shipToAdd)
+        public void PlaceShip(Ship shipToPlace)
         {
-            for (int i = 0; i < Ships.Length; i++)
-            {
-                if (Ships[i] == null)
-                {
-                    Ships[i] = shipToAdd;
-                    return;
-                }
-            }
-
+            Ships.Add(shipToPlace);
         }
 
-        public void PlaceShot(Coordinate targetShot)
+        public void UpdateShotBoard(char shotSymbol, int index)
         {
-            Shots.Add(targetShot);
-        }
-
-        public void UpdateGameBoard(char shotSymbol, int index)
-        {
-            throw new Exception("Computer player doesn't need to update the Game Board.");
+            ShotBoard[index] = shotSymbol;
         }
     }
 }

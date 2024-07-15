@@ -7,49 +7,30 @@ namespace Battleship.UI.Players
     {
         public string Name { get; } = "Capt. " +  GameConsole.GetPlayerName("What's Your Name? Your name: ");
         public bool IsHuman { get; } = true;
-        public Ship[] Ships {  get; private set; } = new Ship[5];
-        public List<Coordinate> Shots { get; private set; } = new List<Coordinate>();
-        public char[] GameBoard { get; set; } = new char[100];
+        public List<Ship> Ships { get; private set; } = new();
+        public List<Coordinate> Shots { get; set; } = new();
+        public char[] ShotBoard { get; set; } = new char[100];
 
-        public Coordinate DecideCoordinate(string prompt)
+        public Coordinate GetCoordinate(string prompt)
         {
             string validCoordinate = GameConsole.GetStringCoordinate(prompt);
 
             return Coordinate.ToCoordinate(validCoordinate);
         }
 
-        public Coordinate DecideCoordinate()
-        {
-            throw new NotImplementedException("A human player needs prompting. This is for AI players only.");
-        }
-
-        public char DecideDirection()
+        public char GetDirection()
         {
             return GameConsole.GetDirection();
         }
 
-        public void AddShip(Ship shipToAdd)
+        public void PlaceShip(Ship shipToPlace)
         {
-            for (int i = 0; i < Ships.Length; i++)
-            {
-                if (Ships[i] == null)
-                {
-                    Ships[i] = shipToAdd;
-                    return;
-                }
-            }
+            Ships.Add(shipToPlace);
         }
 
-        public void PlaceShot(Coordinate targetShot)
+        public void UpdateShotBoard(char shotSymbol, int index)
         {
-
-            Shots.Add(targetShot);
-            
-        }
-
-        public void UpdateGameBoard(char shotSymbol, int index)
-        {
-            GameBoard[index] = shotSymbol;
+            ShotBoard[index] = shotSymbol;
         }
     }
 }
