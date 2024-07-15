@@ -1,23 +1,24 @@
-﻿using Battleship.UI.Interfaces;
+﻿using Battleship.BLL.Interfaces;
 using System.Text.RegularExpressions;
 
-namespace Battleship.UI.Utilities
+
+namespace Battleship.UI
 {
-    public static class ConsoleIO
+    public static class GameConsole
     {
         private readonly static Regex _coordinateRegex = new Regex(@"^[A-J](10|[1-9])$");
 
         public static string GetPlayerName(string prompt)
         {
             string playerName;
-            
+
             do
             {
                 Console.Write(prompt);
 
                 playerName = Console.ReadLine().Trim();
 
-                if (!String.IsNullOrEmpty(playerName))
+                if (!string.IsNullOrEmpty(playerName))
                 {
                     return playerName;
                 }
@@ -25,7 +26,7 @@ namespace Battleship.UI.Utilities
                 Console.WriteLine("Even an obscure captain has a name. What's yours?");
 
             } while (true);
-            
+
 
         }
 
@@ -42,10 +43,10 @@ namespace Battleship.UI.Utilities
                 }
 
                 PrintErrorMessage($"Invalid Coordinate Format.");
-                
+
             } while (true);
 
-        }  
+        }
 
         public static char GetDirection()
         {
@@ -55,7 +56,7 @@ namespace Battleship.UI.Utilities
 
                 if (char.TryParse(Console.ReadLine().Trim().ToUpper(), out char direction))
                 {
-                    if (direction == 'V' ||  direction == 'H')
+                    if (direction == 'V' || direction == 'H')
                     {
                         return direction;
                     }
@@ -69,7 +70,7 @@ namespace Battleship.UI.Utilities
             } while (true);
         }
 
-        
+
         /// <summary>
         /// Streamline marking error message red when prompting users
         /// </summary>
@@ -85,7 +86,7 @@ namespace Battleship.UI.Utilities
         /// Prints a 10x10 grid of marked symbols
         /// </summary>
         /// <param name="board">takes a char array. This method assumes the argument to be a char array of size 100</param>
-        public static void PrintBoard(char[] board) 
+        public static void PrintBoard(char[] board)
         {
             // head row
             Console.ForegroundColor = ConsoleColor.Green;
@@ -94,7 +95,7 @@ namespace Battleship.UI.Utilities
 
             // head column
             for (int i = 0; i < 10; i++)
-            {   
+            {
                 Console.ForegroundColor = ConsoleColor.Green;
 
                 switch (i)
@@ -108,11 +109,11 @@ namespace Battleship.UI.Utilities
                 }
 
                 Console.ResetColor();
-                
+
                 // each grid row
                 for (int j = 0; j < 10; j++)
                 {
-                    int index = (i * 10) + j;
+                    int index = i * 10 + j;
 
                     switch (board[index])
                     {
