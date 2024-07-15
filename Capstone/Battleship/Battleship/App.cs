@@ -1,0 +1,231 @@
+﻿using Battleship.BLL;
+using Battleship.BLL.Interfaces;
+using Battleship.BLL.Ships;
+
+namespace Battleship.UI
+{
+
+    public class App
+    {
+        private Random _startDecider = new Random();
+        private GameManager _mgr = new GameManager();
+        private IPlayer _p1;
+        private IPlayer _p2;
+
+        private void SetUpShip(IPlayer player, Ship ship)
+        {
+            if (player.IsHuman)
+            {
+                char[] shipBoard = new char[100];
+                GameConsole.PrintShipPlacementRules();
+                Console.WriteLine($"\nAhoy! {player.Name}, let's place your ships!");
+
+                shipBoard = _mgr.MapShipsToBoard(shipBoard, player.Ships);
+                GameConsole.PrintBoard(shipBoard);
+
+                // exit loop only if player's placement is valid under all conditions
+                while (true)
+                {
+                    Console.WriteLine($"Ship to place: {ship.Name} | Size: {ship.Size}");
+                    Coordinate startingCoordinate = player.DecideCoordinate("Enter a starting coordinate (e.g. A1): ");
+                    char direction = player.DecideDirection();
+                    ship.SetCoordinates(startingCoordinate, direction);
+
+                    if (_mgr.CheckOffgridShip(ship) == PlacementResult.Offgrid)
+                    {
+                        GameConsole.PrintErrorMessage("Ship Offgrid.\n");
+                        continue;
+                    }
+
+                    if (_mgr.CheckOverlapShip(ship, player.Ships) == PlacementResult.Overlap)
+                    {
+                        GameConsole.PrintErrorMessage("Ship Overlap.\n");
+                        continue;
+                    }
+
+                    // since placed ship is neither offgrid nor overlapped, add it to player's ships and print the game board
+                    player.AddShip(ship);
+                    Console.WriteLine($"You have successfully placed your {ship.Name}.");
+                    if (ship.Symbol == 'D')
+                    {
+                        shipBoard = _mgr.MapShipsToBoard(shipBoard, player.Ships);
+                        GameConsole.PrintBoard(shipBoard);
+                    }
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    return;
+                }
+            }
+            else
+            {
+                while (true)
+                {
+                    char direction = player.DecideDirection();
+                    Coordinate startingCoordinate = player.DecideCoordinate();
+                    ship.SetCoordinates(startingCoordinate, direction);
+
+                    if (_mgr.CheckOffgridShip(ship) == PlacementResult.Offgrid)
+                    {
+                        continue;
+                    }
+
+                    if (_mgr.CheckOverlapShip(ship, player.Ships) == PlacementResult.Overlap)
+                    {
+                        continue;
+                    }
+
+                    player.AddShip(ship);
+                    return;
+                }
+            }
+        }
+
+        private void SetUpPlayer(IPlayer player)
+        {
+            SetUpShip(player, new AircraftCarrier());
+            SetUpShip(player, new BattleShip());
+            SetUpShip(player, new Cruiser());
+            SetUpShip(player, new Submarine());
+            SetUpShip(player, new Destroyer());
+        }
+
+        private void SelectPlayer()
+        {
+            while (true)
+            {
+                Console.WriteLine("Welcome to Battleship where only the best Captain survives!\n");
+                GameConsole.PrintPlayerSelectionRules();
+
+                _p1 = PlayerFactory.GetPlayer("First player - (H)uman or (C)omputer? Your choice: ");
+                _p2 = PlayerFactory.GetPlayer("Second player - (H)uman or (C)omputer? Your choice: ");
+
+                if (!_p1.IsHuman && !_p2.IsHuman)
+                {
+                    GameConsole.PrintErrorMessage("At least one player must be human.");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    continue;
+                }
+
+                break;
+            }
+        }
+
+        private IPlayer GetNextPlayer(IPlayer currentPlayer)
+        {
+            if (currentPlayer == _p1)
+            {
+                return _p2;
+            }
+
+            return _p1;
+        }
+
+        public void Run()
+        {
+            // set up game
+            SelectPlayer();
+            Console.Clear();
+
+            SetUpPlayer(_p1);
+            SetUpPlayer(_p2);
+            Console.Clear();
+
+            IPlayer currentPlayer = _startDecider.Next(1, 3) == 1 ? _p1 : _p2;
+            IPlayer nextPlayer;
+            GameConsole.PrintGameRules();
+            Console.WriteLine($"The God of Chance has blessed {currentPlayer.Name} to place the first shot!\n");
+
+            // start game
+            while (true)
+            {
+                nextPlayer = GetNextPlayer(currentPlayer);
+                int remainingShips = _mgr.CalculateRemainingShips(nextPlayer.Ships);
+                int remainingHits = _mgr.CalculateRemainingHits(nextPlayer.Ships);
+                GameConsole.PrintPlayerSummary(nextPlayer, remainingShips, remainingHits);
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write(currentPlayer.Name);
+                Console.ResetColor();
+                Console.WriteLine("'s turn.\n");
+
+                if (currentPlayer.IsHuman)
+                {
+                    GameConsole.PrintBoard(currentPlayer.GameBoard);
+                }
+
+                // Placing shot
+                PlacementResult placementResult;
+                ShotResult shotResult;
+                Coordinate validShot;
+
+                while (true)
+                {
+                    Coordinate targetShot = currentPlayer.IsHuman ? currentPlayer.DecideCoordinate("Enter target coordinate (e.g. A5): ") : currentPlayer.DecideCoordinate();
+                    placementResult = _mgr.CheckOverlapShot(targetShot, currentPlayer.Shots);
+
+                    if (placementResult == PlacementResult.Overlap)
+                    {
+                        if (currentPlayer.IsHuman)
+                        {
+                            GameConsole.PrintErrorMessage("Shot Overlap.");
+                        }
+
+                        continue;
+                    }
+
+                    validShot = targetShot;
+                    currentPlayer.PlaceShot(targetShot);
+                    break;
+                }
+
+
+                Console.WriteLine($"{currentPlayer.Name} fires a shot at {validShot}...");
+                shotResult = _mgr.EvaluateValidShot(validShot, nextPlayer.Ships);
+
+                int index = Coordinate.ToBoardIndex(validShot);
+
+                switch (shotResult)
+                {
+                    case ShotResult.Miss:
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("\nSplash! A miss!\n");
+                        break;
+                    case ShotResult.Hit:
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine("\nKABOOM! A hit!\n");
+                        break;
+                    case ShotResult.Sunk:
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                        Console.WriteLine("\nKABOOM!\nGLUG-GLUG-GLUG! A ship sunk!\n");
+                        break;
+                }
+
+                Console.ResetColor();
+
+                if (currentPlayer.IsHuman)
+                {
+                    currentPlayer.GameBoard[index] = shotResult == ShotResult.Miss ? 'M' : 'H';
+                }
+
+                // exit game statement
+                if (_mgr.CalculateRemainingShips(nextPlayer.Ships) == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"{currentPlayer.Name}, You are the Victor!");
+                    Console.ResetColor();
+                    return;
+                }
+
+                Console.Write("Press any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
+                GameConsole.PrintGameRules();
+                currentPlayer = GetNextPlayer(currentPlayer);
+            }
+
+        }
+    }
+}

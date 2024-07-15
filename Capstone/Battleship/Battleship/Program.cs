@@ -1,4 +1,4 @@
-﻿using Battleship.UI.Workflows;
+﻿using Battleship.UI;
 
 App app = new App();
 app.Run();
