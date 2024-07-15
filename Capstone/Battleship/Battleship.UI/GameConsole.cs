@@ -10,15 +10,15 @@ namespace Battleship.UI
 
         public static string GetPlayerName(string prompt)
         {
-            string playerName;
+            string? playerName;
 
             do
             {
                 Console.Write(prompt);
 
-                playerName = Console.ReadLine().Trim();
+                playerName = Console.ReadLine()?.Trim();
 
-                if (!string.IsNullOrEmpty(playerName))
+                if (!string.IsNullOrEmpty(playerName) && !string.IsNullOrWhiteSpace(playerName))
                 {
                     return playerName;
                 }
@@ -32,17 +32,24 @@ namespace Battleship.UI
 
         public static string GetStringCoordinate(string prompt)
         {
+            string? input;
+
             do
             {
                 Console.Write(prompt);
-                string input = Console.ReadLine().Trim().ToUpper();
-
-                if (_coordinateRegex.IsMatch(input))
+                input = Console.ReadLine();
+                if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
                 {
-                    return input;
+                    PrintErrorMessage($"Invalid Input.");
+                    continue;
+                }
+                else if (!_coordinateRegex.IsMatch(input))
+                {
+                    PrintErrorMessage("Invalid coordinate format.");
+                    continue;
                 }
 
-                PrintErrorMessage($"Invalid Coordinate Format.");
+                return input;
 
             } while (true);
 
@@ -54,27 +61,22 @@ namespace Battleship.UI
             {
                 Console.Write("Place ship (V)ertical or (H)orizontal: ");
 
-                if (char.TryParse(Console.ReadLine().Trim().ToUpper(), out char direction))
+                if (char.TryParse(Console.ReadLine()?.Trim().ToUpper(), out char dir))
                 {
-                    if (direction == 'V' || direction == 'H')
+                    if (dir == 'V' || dir == 'H')
                     {
-                        return direction;
+                        return dir;
                     }
 
-                    PrintErrorMessage($"{direction} is not a recognzied direction in this game.");
+                    PrintErrorMessage($"Invalid direction: {dir}");
                     continue;
                 }
 
-                PrintErrorMessage("Input illegitimate ");
+                PrintErrorMessage("Invalid input.");
 
             } while (true);
         }
 
-
-        /// <summary>
-        /// Streamline marking error message red when prompting users
-        /// </summary>
-        /// <param name="error">takes a string error message and outputs red error message</param>
         public static void PrintErrorMessage(string error)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -145,13 +147,20 @@ namespace Battleship.UI
             Console.WriteLine();
         }
 
+        public static void AnyKey()
+        {
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
         public static void PrintPlayerSelectionRules()
         {
-            Console.Write("==========================");
+            Console.Write("=========================");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Player Selection Rules");
+            Console.Write(" Player Selection Rules ");
             Console.ResetColor();
-            Console.WriteLine("==========================");
+            Console.WriteLine("=========================");
             Console.WriteLine("| You may choose to play with the Computer or with another human player. |");
             Console.WriteLine("| You may not choose two Computer Players to play against each other.    |");
             Console.WriteLine("==========================================================================\n");
@@ -159,11 +168,11 @@ namespace Battleship.UI
 
         public static void PrintShipPlacementRules()
         {
-            Console.Write("====================================");
+            Console.Write("===================================");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Ship Placement Rules");
+            Console.Write(" Ship Placement Rules ");
             Console.ResetColor();
-            Console.WriteLine("====================================");
+            Console.WriteLine("===================================");
             Console.WriteLine("| 1. You may only place a ship with on-grid coordinates: from A-J (column) and 1-10 (row). |");
             Console.WriteLine("| 2. You will be prompted for a starting coordinate and placement direction.               |");
             Console.WriteLine("| 3. You may not place a ship that has any coordinate that overlaps with other ships.      |");
@@ -172,11 +181,11 @@ namespace Battleship.UI
 
         public static void PrintGameRules()
         {
-            Console.Write("=============================");
+            Console.Write("============================");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Game Rules");
+            Console.Write(" Game Rules ");
             Console.ResetColor();
-            Console.WriteLine("=============================");
+            Console.WriteLine("============================");
             Console.WriteLine("| 1. You may place only one shot per turn.                         |");
             Console.WriteLine("| 2. You may not repeat placed shots.                              |");
             Console.WriteLine("| 3. Whoever sinks all 5 ships of the other player claims victory. |");
