@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Battleship.BLL\Battleship.BLL.csproj" />
-    <ProjectReference Include="..\Battleship\Battleship.UI.csproj" />
+    <ProjectReference Include="..\Battleship.UI\Battleship.UI.csproj" />
   </ItemGroup>
 
 </Project>
