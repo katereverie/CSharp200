@@ -1,8 +1,8 @@
 ﻿namespace Battleship.BLL
 {
-    public class GameManager
+    public static class GameManager
     {
-        public PlacementResult CheckOffgridShip(Coordinate startingCoord, int size, char dir)
+        public static PlacementResult CheckOffgridShip(Coordinate startingCoord, int size, char dir)
         {
             if (dir == 'V')
             {
@@ -12,7 +12,7 @@
             return startingCoord.X + size > 11 ? PlacementResult.Offgrid : PlacementResult.Placed;
         }
 
-        public PlacementResult CheckOverlapShip(Ship shipToAdd, List<Ship> ships)
+        public static PlacementResult CheckOverlapShip(Ship shipToAdd, List<Ship> ships)
         {
 
             foreach (Ship ship in ships)
@@ -30,7 +30,7 @@
             
         }
 
-        public PlacementResult CheckOverlapShot(Coordinate shot, List<Coordinate> Shots)
+        public static PlacementResult CheckOverlapShot(Coordinate shot, List<Coordinate> Shots)
         {
             if (Shots == null || !Shots.Contains(shot))
             {
@@ -41,7 +41,7 @@
 
         }
 
-        public ShotResult EvaluateValidShot(Coordinate validShot, List<Ship> otherPlayerShips)
+        public static ShotResult EvaluateValidShot(Coordinate validShot, List<Ship> otherPlayerShips)
         {
 
             foreach (Ship ship in otherPlayerShips)
@@ -56,7 +56,7 @@
             return ShotResult.Miss;
         }
 
-        public int CalculateRemainingShips(List<Ship> ships)
+        public static int CalculateRemainingShips(List<Ship> ships)
         {
             int remainingShips = 5;
 
@@ -71,7 +71,7 @@
             return remainingShips;
         }
 
-        public int CalculateRemainingHits(List<Ship> Ships)
+        public static int CalculateRemainingHits(List<Ship> Ships)
         {
             int remainingHits = 17;
 
@@ -83,7 +83,7 @@
             return remainingHits;
         }
 
-        public char[] MapShipsToBoard(char[] shipBoard, List<Ship> ships)
+        public static char[] MapShipsToBoard(char[] shipBoard, List<Ship> ships)
         {
             if (ships != null)
             {
