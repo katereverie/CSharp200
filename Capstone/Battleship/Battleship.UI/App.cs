@@ -8,6 +8,7 @@ namespace Battleship.UI
     public class App
     {
         private Random _startDecider = new();
+        private GameManager _mgr = new();
         private readonly IPlayer _p1;
         private readonly IPlayer _p2;
 
@@ -17,15 +18,14 @@ namespace Battleship.UI
             _p2 = PlayerFactory.GetPlayer(2);
         }
 
-        private static void PlaceShip(IPlayer player, Ship shipToPlace)
+        private void PlaceShip(IPlayer player, Ship shipToPlace)
         {
             if (player.IsHuman)
             {
                 char[] shipBoard = new char[100];
                 GameConsole.PrintShipPlacementRules();
                 Console.WriteLine($"\nAhoy! {player.Name}, let's place your ships!");
-
-                shipBoard = GameManager.MapShipsToBoard(shipBoard, player.Ships);
+                shipBoard = _mgr.MapShipsToBoard(shipBoard, player.Ships);
                 GameConsole.PrintBoard(shipBoard);
 
                 // exit loop only if player's placement is valid under all conditions
@@ -35,7 +35,7 @@ namespace Battleship.UI
                     Coordinate startingCoordinate = player.GetCoordinate("Enter a starting coordinate (e.g. A1): ");
                     char direction = player.GetDirection();
 
-                    if (GameManager.CheckOffgridShip(startingCoordinate, shipToPlace.Size, direction) == PlacementResult.Offgrid)
+                    if (_mgr.CheckOffgridShip(startingCoordinate, shipToPlace.Size, direction) == PlacementResult.Offgrid)
                     {
                         GameConsole.PrintErrorMessage("Ship Offgrid.\n");
                         continue;
@@ -43,7 +43,7 @@ namespace Battleship.UI
 
                     shipToPlace.SetCoordinates(startingCoordinate, direction);
 
-                    if (GameManager.CheckOverlapShip(shipToPlace, player.Ships) == PlacementResult.Overlap)
+                    if (_mgr.CheckOverlapShip(shipToPlace, player.Ships) == PlacementResult.Overlap)
                     {
                         GameConsole.PrintErrorMessage("Ship Overlap.\n");
                         continue;
@@ -52,14 +52,14 @@ namespace Battleship.UI
                     // since placed ship is neither offgrid nor overlapped, add it to player's ships and print the game board
                     player.PlaceShip(shipToPlace);
                     Console.WriteLine($"You have successfully placed your {shipToPlace.Name}.");
+
                     if (shipToPlace.Symbol == 'D')
                     {
-                        shipBoard = GameManager.MapShipsToBoard(shipBoard, player.Ships);
+                        shipBoard = _mgr.MapShipsToBoard(shipBoard, player.Ships);
                         GameConsole.PrintBoard(shipBoard);
                     }
-                    Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
-                    Console.Clear();
+
+                    GameConsole.AnyKey();
                     return;
                 }
             }
@@ -69,14 +69,14 @@ namespace Battleship.UI
                 {
                     char dir = player.GetDirection();
                     Coordinate startingCoord = player.GetCoordinate("");
-                    if (GameManager.CheckOffgridShip(startingCoord, shipToPlace.Size, dir) == PlacementResult.Offgrid)
+                    if (_mgr.CheckOffgridShip(startingCoord, shipToPlace.Size, dir) == PlacementResult.Offgrid)
                     {
                         continue;
                     }
 
                     shipToPlace.SetCoordinates(startingCoord, dir);
 
-                    if (GameManager.CheckOverlapShip(shipToPlace, player.Ships) == PlacementResult.Overlap)
+                    if (_mgr.CheckOverlapShip(shipToPlace, player.Ships) == PlacementResult.Overlap)
                     {
                         continue;
                     }
@@ -87,7 +87,7 @@ namespace Battleship.UI
             }
         }
 
-        private static void SetUpPlayer(IPlayer p)
+        private void SetUpPlayer(IPlayer p)
         {
             PlaceShip(p, new AircraftCarrier());
             PlaceShip(p, new BattleShip());
@@ -116,8 +116,8 @@ namespace Battleship.UI
             while (true)
             {
                 nextPlayer = GetNextPlayer(currentPlayer);
-                int remainingShips = GameManager.CalculateRemainingShips(nextPlayer.Ships);
-                int remainingHits = GameManager.CalculateRemainingHits(nextPlayer.Ships);
+                int remainingShips = _mgr.CalculateRemainingShips(nextPlayer.Ships);
+                int remainingHits = _mgr.CalculateRemainingHits(nextPlayer.Ships);
                 GameConsole.PrintPlayerSummary(nextPlayer, remainingShips, remainingHits);
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -135,7 +135,7 @@ namespace Battleship.UI
                 {
                     shot = currentPlayer.IsHuman ? currentPlayer.GetCoordinate("Enter target coordinate (e.g. A5): ") : currentPlayer.GetCoordinate("");
 
-                    if (GameManager.CheckOverlapShot(shot, currentPlayer.Shots) == PlacementResult.Overlap)
+                    if (_mgr.CheckOverlapShot(shot, currentPlayer.Shots) == PlacementResult.Overlap)
                     {
                         if (currentPlayer.IsHuman)
                         {
@@ -150,7 +150,7 @@ namespace Battleship.UI
                 }
 
                 Console.WriteLine($"{currentPlayer.Name} fires a shot at {shot}...");
-                shotResult = GameManager.EvaluateValidShot(shot, nextPlayer.Ships);
+                shotResult = _mgr.EvaluateValidShot(shot, nextPlayer.Ships);
 
                 int index = Coordinate.ToBoardIndex(shot);
 
@@ -175,7 +175,7 @@ namespace Battleship.UI
                 currentPlayer.ShotBoard[index] = shotResult == ShotResult.Miss ? 'M' : 'H';
 
                 // exit game statement
-                if (GameManager.CalculateRemainingShips(nextPlayer.Ships) == 0)
+                if (_mgr.CalculateRemainingShips(nextPlayer.Ships) == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"{currentPlayer.Name} is the Victor!");

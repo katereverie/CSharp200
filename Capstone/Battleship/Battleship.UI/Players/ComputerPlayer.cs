@@ -1,6 +1,5 @@
 ﻿using Battleship.BLL.Interfaces;
 using Battleship.BLL;
-using Battleship.BLL.Ships;
 
 namespace Battleship.UI.Players
 {

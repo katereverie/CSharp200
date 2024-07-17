@@ -9,6 +9,8 @@ namespace Battleship.Tests
     [TestFixture]
     public class GameManagerTests
     {
+        private GameManager _mgr = new GameManager();
+
         [Test]
         public void TestShipPlacement_Offgrid()
         {
@@ -16,10 +18,10 @@ namespace Battleship.Tests
             var startCoord2 = new Coordinate(6, 8); // F8
             var startCoord3 = new Coordinate(5, 5); // E5
 
-            var result1 = GameManager.CheckOffgridShip(startCoord1, 5, 'V');
-            var result2 = GameManager.CheckOffgridShip(startCoord2, 6, 'H');
-            var result3 = GameManager.CheckOffgridShip(startCoord3, 6, 'V');
-            var result4 = GameManager.CheckOffgridShip(startCoord3, 6, 'H');
+            var result1 = _mgr.CheckOffgridShip(startCoord1, 5, 'V');
+            var result2 = _mgr.CheckOffgridShip(startCoord2, 6, 'H');
+            var result3 = _mgr.CheckOffgridShip(startCoord3, 6, 'V');
+            var result4 = _mgr.CheckOffgridShip(startCoord3, 6, 'H');
 
             Assert.That(result1, Is.EqualTo(PlacementResult.Offgrid));
             Assert.That(result2, Is.EqualTo(PlacementResult.Offgrid));
@@ -38,8 +40,8 @@ namespace Battleship.Tests
             var repo = new DefaultShipRepository();
             ship1.SetCoordinates(startCoord, 'H');
 
-            var result1 = GameManager.CheckOverlapShip(ship1, repo.Ships);
-            var result2 = GameManager.CheckOverlapShip(ship2, repo.Ships);
+            var result1 = _mgr.CheckOverlapShip(ship1, repo.Ships);
+            var result2 = _mgr.CheckOverlapShip(ship2, repo.Ships);
 
             Assert.That(result1, Is.EqualTo(PlacementResult.Added));
             Assert.That(result2, Is.EqualTo(PlacementResult.Overlap));
@@ -54,8 +56,8 @@ namespace Battleship.Tests
 
             var repo = new DefaultShotHistory(); 
 
-            var result1 = GameManager.CheckOverlapShot(shot1, repo.Shots);
-            var result2 = GameManager.CheckOverlapShot(shot2, repo.Shots);
+            var result1 = _mgr.CheckOverlapShot(shot1, repo.Shots);
+            var result2 = _mgr.CheckOverlapShot(shot2, repo.Shots);
 
             Assert.That(result1, Is.EqualTo(PlacementResult.Overlap));
             Assert.That(result2, Is.EqualTo(PlacementResult.Placed));
@@ -71,9 +73,9 @@ namespace Battleship.Tests
 
             var repo = new DefaultShipRepository();
 
-            var result1 = GameManager.EvaluateValidShot(shot1, repo.Ships);
-            var result2 = GameManager.EvaluateValidShot(shot2, repo.Ships);
-            var result3 = GameManager.EvaluateValidShot(shot3, repo.Ships);
+            var result1 = _mgr.EvaluateValidShot(shot1, repo.Ships);
+            var result2 = _mgr.EvaluateValidShot(shot2, repo.Ships);
+            var result3 = _mgr.EvaluateValidShot(shot3, repo.Ships);
 
             bool allMiss = result1 == ShotResult.Miss && result1 == result2 && result2 == result3 ? true : false;
 
@@ -89,9 +91,9 @@ namespace Battleship.Tests
 
             var repo = new DefaultShipRepository();
 
-            var result1 = GameManager.EvaluateValidShot(shot1, repo.Ships);
-            var result2 = GameManager.EvaluateValidShot(shot2, repo.Ships);
-            var result3 = GameManager.EvaluateValidShot(shot3, repo.Ships);
+            var result1 = _mgr.EvaluateValidShot(shot1, repo.Ships);
+            var result2 = _mgr.EvaluateValidShot(shot2, repo.Ships);
+            var result3 = _mgr.EvaluateValidShot(shot3, repo.Ships);
 
             bool allHit = result1 == ShotResult.Hit && result1 == result2 && result2 == result3? true : false;
 
@@ -110,8 +112,8 @@ namespace Battleship.Tests
             repo.Ships[0].CountHit();
             repo.Ships[0].CountHit();
 
-            var result1 = GameManager.EvaluateValidShot(shot1, repo.Ships);
-            var result2 = GameManager.EvaluateValidShot(shot2 , repo.Ships);
+            var result1 = _mgr.EvaluateValidShot(shot1, repo.Ships);
+            var result2 = _mgr.EvaluateValidShot(shot2 , repo.Ships);
 
             Assert.That(result1, Is.EqualTo(ShotResult.Hit));
             Assert.That(result2, Is.EqualTo(ShotResult.Sunk));
@@ -128,16 +130,16 @@ namespace Battleship.Tests
             var shot4 = new Coordinate(1, 4);
             var shot5 = new Coordinate(1, 5);
 
-            GameManager.EvaluateValidShot(shot1, repo.Ships);
-            GameManager.EvaluateValidShot(shot2, repo.Ships);
-            GameManager.EvaluateValidShot(shot3, repo.Ships);
-            GameManager.EvaluateValidShot(shot4, repo.Ships);
+            _mgr.EvaluateValidShot(shot1, repo.Ships);
+            _mgr.EvaluateValidShot(shot2, repo.Ships);
+            _mgr.EvaluateValidShot(shot3, repo.Ships);
+            _mgr.EvaluateValidShot(shot4, repo.Ships);
 
-            var calResult1 = GameManager.CalculateRemainingShips(repo.Ships);
+            var calResult1 = _mgr.CalculateRemainingShips(repo.Ships);
 
-            GameManager.EvaluateValidShot(shot5 , repo.Ships);
+            _mgr.EvaluateValidShot(shot5 , repo.Ships);
 
-            var calResult2 = GameManager.CalculateRemainingShips(repo.Ships);
+            var calResult2 = _mgr.CalculateRemainingShips(repo.Ships);
 
             Assert.That(calResult1, Is.EqualTo(5));
             Assert.That(calResult2, Is.EqualTo(4));
@@ -148,15 +150,15 @@ namespace Battleship.Tests
         {
             var repo = new DefaultShipRepository(); // 17
 
-            var calResult1 = GameManager.CalculateRemainingHits(repo.Ships);
+            var calResult1 = _mgr.CalculateRemainingHits(repo.Ships);
 
             var shot1 = new Coordinate(1, 1);
             var shot2 = new Coordinate(1, 2);
 
-            GameManager.EvaluateValidShot(shot1 , repo.Ships);
-            GameManager.EvaluateValidShot(shot2 , repo.Ships);
+            _mgr.EvaluateValidShot(shot1 , repo.Ships);
+            _mgr.EvaluateValidShot(shot2 , repo.Ships);
 
-            var calResult2 = GameManager.CalculateRemainingHits(repo.Ships);
+            var calResult2 = _mgr.CalculateRemainingHits(repo.Ships);
 
             Assert.That(calResult1 , Is.EqualTo(17));
             Assert.That(calResult2 , Is.EqualTo(15));
