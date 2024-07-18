@@ -50,7 +50,7 @@ namespace Battleship.UI
                     }
 
                     // since placed ship is neither offgrid nor overlapped, add it to player's ships and print the game board
-                    player.PlaceShip(shipToPlace);
+                    player.Ships.Add(shipToPlace);
                     Console.WriteLine($"You have successfully placed your {shipToPlace.Name}.");
 
                     if (shipToPlace.Symbol == 'D')
@@ -81,7 +81,7 @@ namespace Battleship.UI
                         continue;
                     }
 
-                    player.PlaceShip(shipToPlace);
+                    player.Ships.Add(shipToPlace);
                     return;
                 }
             }

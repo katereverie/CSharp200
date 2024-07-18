@@ -2,12 +2,12 @@
 {
     public class Ship
     {
-        public string Name { get; private set; }
-        public char Symbol { get; private set; }
-        public int Size { get; private set; }
+        public string Name { get; }
+        public char Symbol { get; }
+        public int Size { get; }
         public int HitCount { get; private set; }
         public bool IsSunk { get; private set; }
-        public Coordinate[] Coordinates { get; set; }
+        public Coordinate[] Coordinates { get; }
 
         public Ship(string name, int size)
         {

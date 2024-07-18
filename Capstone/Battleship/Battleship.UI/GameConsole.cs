@@ -1,4 +1,5 @@
-﻿using Battleship.BLL.Interfaces;
+﻿using Battleship.BLL;
+using Battleship.BLL.Interfaces;
 using System.Text.RegularExpressions;
 
 
@@ -6,7 +7,7 @@ namespace Battleship.UI
 {
     public static class GameConsole
     {
-        private readonly static Regex _coordinateRegex = new Regex(@"^[A-J](10|[1-9])$");
+        private readonly static Regex _coordinateRegex = new Regex(@"^[A-Ja-j](10|[1-9])$");
 
         public static string GetPlayerName(string prompt)
         {
@@ -26,8 +27,6 @@ namespace Battleship.UI
                 Console.WriteLine("Even an obscure captain has a name. What's yours?");
 
             } while (true);
-
-
         }
 
         public static string GetStringCoordinate(string prompt)
@@ -49,10 +48,9 @@ namespace Battleship.UI
                     continue;
                 }
 
-                return input;
+                return input.ToUpper();
 
             } while (true);
-
         }
 
         public static char GetDirection()
@@ -138,7 +136,6 @@ namespace Battleship.UI
                             Console.ResetColor();
                             break;
                     }
-
                 }
                 // go to next row
                 Console.WriteLine();

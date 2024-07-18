@@ -9,7 +9,7 @@ namespace Battleship.UI.Players
 
         public string Name { get; } = "Capt. Dee G. Tall";
         public bool IsHuman { get; } = false;
-        public List<Ship> Ships { get; private set; } = new();
+        public List<Ship> Ships { get; set; } = new();
         public List<Coordinate> Shots { get; set; } = new();
         public char[] ShotBoard { get; } = new char[100];
 
@@ -24,11 +24,6 @@ namespace Battleship.UI.Players
         public char GetDirection()
         {
             return _generator.Next(1, 3) == 1? 'V' : 'H';
-        }
-
-        public void PlaceShip(Ship shipToPlace)
-        {
-            Ships.Add(shipToPlace);
         }
 
         public void UpdateShotBoard(char shotSymbol, int index)

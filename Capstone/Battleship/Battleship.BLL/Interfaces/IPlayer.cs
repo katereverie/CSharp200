@@ -11,7 +11,6 @@
         // a player can add ship and place a shot
         Coordinate GetCoordinate(string prompt);
         char GetDirection();
-        void PlaceShip(Ship shipToPlace);
         void UpdateShotBoard(char shotSymbol, int index);
     }
 }
