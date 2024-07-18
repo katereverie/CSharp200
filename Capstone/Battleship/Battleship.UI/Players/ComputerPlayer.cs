@@ -25,10 +25,5 @@ namespace Battleship.UI.Players
         {
             return _generator.Next(1, 3) == 1? 'V' : 'H';
         }
-
-        public void UpdateShotBoard(char shotSymbol, int index)
-        {
-            ShotBoard[index] = shotSymbol;
-        }
     }
 }

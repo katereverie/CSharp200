@@ -151,9 +151,6 @@ namespace Battleship.UI
 
                 Console.WriteLine($"{currentPlayer.Name} fires a shot at {shot}...");
                 shotResult = _mgr.EvaluateValidShot(shot, nextPlayer.Ships);
-
-                int index = Coordinate.ToBoardIndex(shot);
-
                 switch (shotResult)
                 {
                     case ShotResult.Miss:
@@ -169,9 +166,9 @@ namespace Battleship.UI
                         Console.WriteLine("\nKABOOM!\nGLUG-GLUG-GLUG! A ship sunk!\n");
                         break;
                 }
-
                 Console.ResetColor();
 
+                int index = Coordinate.ToBoardIndex(shot);
                 currentPlayer.ShotBoard[index] = shotResult == ShotResult.Miss ? 'M' : 'H';
 
                 // exit game statement

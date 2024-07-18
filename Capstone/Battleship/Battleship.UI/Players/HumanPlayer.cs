@@ -13,19 +13,12 @@ namespace Battleship.UI.Players
 
         public Coordinate GetCoordinate(string prompt)
         {
-            string validCoordinate = GameConsole.GetStringCoordinate(prompt);
-
-            return Coordinate.ToCoordinate(validCoordinate);
+            return Coordinate.ToCoordinate(GameConsole.GetStringCoordinate(prompt));
         }
 
         public char GetDirection()
         {
             return GameConsole.GetDirection();
-        }
-
-        public void UpdateShotBoard(char shotSymbol, int index)
-        {
-            ShotBoard[index] = shotSymbol;
         }
     }
 }
