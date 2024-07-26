@@ -13,7 +13,7 @@ namespace Battleship.UI.Players
         public List<Coordinate> Shots { get; set; } = [];
         public char[] ShotBoard { get; } = new char[100];
 
-        public Coordinate GetCoordinate(string prompt)
+        public Coordinate GetCoordinate(string prompt = "")
         {
             int x = _generator.Next(1, 11);
             int y = _generator.Next(1, 11);

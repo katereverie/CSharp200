@@ -133,7 +133,7 @@ namespace Battleship.UI
 
                 while (true)
                 {
-                    shot = currentPlayer.IsHuman ? currentPlayer.GetCoordinate("Enter target coordinate (e.g. A5): ") : currentPlayer.GetCoordinate("");
+                    shot = currentPlayer.IsHuman ? currentPlayer.GetCoordinate("Enter target coordinate (e.g. A5): ") : currentPlayer.GetCoordinate();
 
                     if (_mgr.CheckOverlapShot(shot, currentPlayer.Shots) == PlacementResult.Overlap)
                     {

@@ -9,7 +9,7 @@
         char[] ShotBoard {  get; }
 
         // a player can add ship and place a shot
-        Coordinate GetCoordinate(string prompt);
+        Coordinate GetCoordinate(string prompt = "");
         char GetDirection();
     }
 }
